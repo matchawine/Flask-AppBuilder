@@ -6,7 +6,7 @@ from packaging import version
 import wtforms
 from wtforms import widgets
 from wtforms.fields import Field, SelectField, SelectFieldBase
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, Optional
 
 IS_WTFORMS_LESS_THEN_3_1_0 = version.parse(wtforms.__version__) < version.parse("3.1.0")
 
@@ -274,6 +274,9 @@ class EnumField(SelectField):
                 return str(value)
 
         choices = list(zip(enums, labels))
+        
+        if any(isinstance(validator, Optional) for validator in validators):
+            choices.insert(0, (None, ""))
 
         super(EnumField, self).__init__(
             label=label,
